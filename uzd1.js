@@ -16,53 +16,80 @@ let submitButton = document.createElement("button");
 var groupNr
 var personNr
 
-createForm.addEventListener("click", () => {
-    groupNr = Number(document.querySelector(".groupNr").value);
-    personNr = Number(document.querySelector(".personNr").value);
-    if (personNr >= 5 && personNr <= 20 && groupNr > 0 && personNr >= groupNr){
-        for (let i = 0; i < personNr; i++){
-            let newElement = document.createElement("fieldset");
-            newElement.appendChild(document.createElement("label")).innerHTML = `${i + 1} Vardas `;
-            let fName = document.createElement("input");
-            fNames.push(fName);
-            newElement.appendChild(fName);
-            newElement.appendChild(document.createElement("label")).innerHTML = " Pavarde ";
-            let lName = document.createElement("input")
-            lNames.push(lName);
-            newElement.appendChild(lName);
-            newElement.appendChild(lName);
-            form.appendChild(newElement);
-        }
-        form.appendChild(submitButton).innerHTML = "Isskirstyti i grupes";
-        createForm.disabled = "true";
-    }
-})
+function numValue(output, input){
+    // Returns a numeric value of an input field
+    output = Number(document.querySelector(input).value);
+    return output;
+}
 
-submitButton.addEventListener("click", () => {
-    event.preventDefault();
-    for (name in fNames){
-        names.push(`${fNames[name].value} ${lNames[name].value}`);
+function fieldMaker(input1, input2, name1, name2){
+    // Creates a specified amount of fieldsets with 2 input fields, creates an array for each input type .
+    if (input1 >= 5 && input1 <= 20 && input2 > 0 && input1 >= input2){
+        for (let i = 0; i < input1; i++){
+            let field = document.createElement("fieldset");
+            let label1 = document.createElement("label");
+            let label2 = document.createElement("label");
+            let output1 = document.createElement("input");
+            let output2 = document.createElement("input");
+            field.appendChild(label1).innerHTML = `${i + 1} ${name1}`;
+            fNames.push(output1);
+            field.appendChild(output1);
+            field.appendChild(label2).innerHTML = `${name2} `;
+            lNames.push(output2);
+            field.appendChild(output2);
+            form.appendChild(field);
+        }
     }
-    let index = names.length;
+}
+
+function merge(list1, list2, newList){
+    // Merges the sames indexes of two arrays and adds them into a new array.
+    for (index in list1){
+        newList.push(`${list1[index].value} ${list2[index].value}`);
+    }
+    return newList;
+}
+
+function scramble(array) {
+    // Randomizes the order of array elements.
+    let index = array.length;
     while (index != 0){
         let rIndex = Math.floor(Math.random() * index);
         index--;
-        [names[index], names[rIndex]] = [names[rIndex], names[index]];
+        [array[index], array[rIndex]] = [array[rIndex], array[index]];
     }
-    let groups = document.querySelector(".groups");
-    for (let i = 0; i < groupNr; i++){
+    return array;
+}
+
+function listMaker(section, listNr, listName, list){
+    // Creates a list.
+    let groups = document.querySelector(section);
+    for (let i = 0; i < listNr; i++){
         let group = document.createElement("ul");
         group.classList.add(`group${i + 1}`);
-        groups.appendChild(group).innerHTML = `Group ${i + 1}`
+        groups.appendChild(group).innerHTML = `${listName} ${i + 1}`;
     }
-    let groupId = 0
-    for (name of names){
+    let groupId = 0;
+    for (index of list){
         groupId ++;
-        document.querySelector(`.group${groupId}`).appendChild(document.createElement("li")).innerHTML = name;
-        if (groupId == groupNr){
+        document.querySelector(`.group${groupId}`).appendChild(document.createElement("li")).innerHTML = index;
+        if (groupId == listNr){
             groupId = 0;
         }
     }
-    submitButton.disabled = "true";
+}
+
+createForm.addEventListener("click", () => {
+    groupNr = numValue(groupNr, ".groupNr");
+    personNr = numValue(personNr, ".personNr");
+    fieldMaker(personNr, groupNr, "Vardas", "Pavarde");
+    form.appendChild(submitButton).innerHTML = "Isskirstyti i grupes";
+    createForm.disabled = "true";
 })
 
+submitButton.addEventListener("click", () => {
+    merge(fNames, lNames, names);
+    scramble(names);
+    listMaker(".groups", groupNr, "Group", names);
+    submitButton.disabled = "true";
+})
