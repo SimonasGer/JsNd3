@@ -39,6 +39,8 @@ function fieldMaker(input1, input2, name1, name2){
             field.appendChild(output2);
             form.appendChild(field);
         }
+    form.appendChild(submitButton).innerHTML = "Isskirstyti i grupes";
+    createForm.disabled = "true";
     }
 }
 
@@ -76,6 +78,7 @@ function listMaker(section, listNr, listName, list){
         if (groupId == listNr){
             groupId = 0;
         }
+    submitButton.disabled = "true";
     }
 }
 
@@ -83,13 +86,10 @@ createForm.addEventListener("click", () => {
     groupNr = numValue(groupNr, ".groupNr");
     personNr = numValue(personNr, ".personNr");
     fieldMaker(personNr, groupNr, "Vardas", "Pavarde");
-    form.appendChild(submitButton).innerHTML = "Isskirstyti i grupes";
-    createForm.disabled = "true";
 })
 
 submitButton.addEventListener("click", () => {
     merge(fNames, lNames, names);
     scramble(names);
     listMaker(".groups", groupNr, "Group", names);
-    submitButton.disabled = "true";
 })
